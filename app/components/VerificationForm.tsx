@@ -120,29 +120,48 @@ export default function VerificationForm({ publicKey }: VerificationFormProps) {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex items-center justify-center rounded-2xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
           >
+            {isSubmitting ? <Spinner /> : null}
             {isSubmitting ? "Processing…" : "Verify & Record on Stellar"}
           </button>
           <button
             type="button"
             onClick={handleFetch}
             disabled={isSubmitting}
-            className="inline-flex items-center justify-center rounded-2xl border border-slate-700 bg-slate-950/80 px-6 py-3 text-sm text-slate-200 transition hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-700 bg-slate-950/80 px-6 py-3 text-sm text-slate-200 transition hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-60"
           >
+            {isSubmitting ? <Spinner /> : null}
             {isSubmitting ? "Working…" : "Fetch Stored ID Hash"}
           </button>
         </div>
       </form>
 
-      <div className="mt-6 rounded-3xl bg-slate-950/70 p-5 text-sm text-slate-300">
-        <p>{message}</p>
-        {transactionHash ? (
-          <p className="mt-3 break-all">Transaction hash: <span className="font-mono text-slate-100">{transactionHash}</span></p>
-        ) : null}
-        {storedHash ? (
-          <p className="mt-3 break-all">Stored hash: <span className="font-mono text-slate-100">{storedHash}</span></p>
-        ) : null}
+      <div className={`mt-6 flex items-center gap-2 rounded-3xl border bg-slate-950/70 p-5 text-sm transition-colors ${TONE_CLASSES[tone]}`}>
+        <div className="w-full">
+          <p className="flex items-center gap-2">
+            {isSubmitting ? <Spinner /> : null}
+            {message}
+          </p>
+          {transactionHash ? (
+            <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-slate-900/70 px-4 py-3">
+              <p className="min-w-0 break-all">
+                <span className="text-slate-500">Transaction hash</span>{" "}
+                <span className="font-mono text-slate-100">{transactionHash}</span>
+              </p>
+              <CopyButton value={transactionHash} />
+            </div>
+          ) : null}
+          {storedHash ? (
+            <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-slate-900/70 px-4 py-3">
+              <p className="min-w-0 break-all">
+                <span className="text-slate-500">Stored hash</span>{" "}
+                <span className="font-mono text-slate-100">{storedHash}</span>
+              </p>
+              <CopyButton value={storedHash} />
+            </div>
+          ) : null}
+        </div>
       </div>
     </section>
   );
