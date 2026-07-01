@@ -29,6 +29,11 @@ export async function getFreighterPublicKey(): Promise<string> {
   return result.address;
 }
 
+export function truncateAddress(address: string, visible = 4): string {
+  if (address.length <= visible * 2 + 3) return address;
+  return `${address.slice(0, visible)}…${address.slice(-visible)}`;
+}
+
 export function bytesToHex(bytes: Uint8Array): string {
   return Array.from(bytes)
     .map((byte) => byte.toString(16).padStart(2, "0"))
