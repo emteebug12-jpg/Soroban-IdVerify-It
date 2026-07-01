@@ -103,7 +103,10 @@ export default function VerificationForm({ publicKey }: VerificationFormProps) {
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <label className="block text-sm font-medium text-slate-300">
-          Identity payload
+          <div className="flex items-center justify-between">
+            <span>Identity payload</span>
+            <span className="text-xs font-normal text-slate-500">{documentValue.length} characters</span>
+          </div>
           <textarea
             value={documentValue}
             onChange={(event) => setDocumentValue(event.target.value)}
