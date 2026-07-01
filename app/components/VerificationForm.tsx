@@ -69,19 +69,23 @@ export default function VerificationForm({ publicKey }: VerificationFormProps) {
 
   const handleFetch = async () => {
     if (!publicKey) {
+      setTone("error");
       setMessage("Connect a wallet first.");
       return;
     }
 
     setIsSubmitting(true);
+    setTone("info");
     setMessage("Querying stored value from Soroban...");
 
     try {
       const result = await fetchStoredIdHash(publicKey);
       setStoredHash(result);
+      setTone(result ? "success" : "error");
       setMessage(result ? "Stored hash retrieved." : "No stored hash found for this address.");
     } catch (error) {
       console.error(error);
+      setTone("error");
       setMessage(error instanceof Error ? error.message : String(error));
     } finally {
       setIsSubmitting(false);
