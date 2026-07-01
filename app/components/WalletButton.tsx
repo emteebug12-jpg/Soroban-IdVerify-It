@@ -1,21 +1,49 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { connectFreighter, getFreighterPublicKey, isFreighterConnected } from "../../lib/stellar";
+import { connectFreighter, getFreighterPublicKey, isFreighterConnected, truncateAddress } from "../../lib/stellar";
+import CopyButton from "./CopyButton";
 
 interface WalletButtonProps {
   publicKey: string;
   setPublicKey: (key: string) => void;
 }
 
+type StatusTone = "info" | "success" | "error";
+
+const TONE_CLASSES: Record<StatusTone, string> = {
+  info: "text-slate-500",
+  success: "text-emerald-400",
+  error: "text-rose-400",
+};
+
+const DOT_CLASSES: Record<StatusTone, string> = {
+  info: "bg-slate-500",
+  success: "bg-emerald-400",
+  error: "bg-rose-400",
+};
+
+function Spinner() {
+  return (
+    <svg className="h-3.5 w-3.5 animate-spin text-slate-500" viewBox="0 0 24 24" fill="none">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4z" />
+    </svg>
+  );
+}
+
 export default function WalletButton({ publicKey, setPublicKey }: WalletButtonProps) {
   const [status, setStatus] = useState("Checking Freighter...");
+  const [tone, setTone] = useState<StatusTone>("info");
+  const [isConnecting, setIsConnecting] = useState(true);
 
   useEffect(() => {
     async function load() {
       if (typeof window === "undefined") return;
       if (!(window as any).freighter) {
+        setTone("error");
         setStatus("Freighter not detected. Please install the browser extension.");
+        setIsConnecting(false);
         return;
       }
 
