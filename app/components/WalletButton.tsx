@@ -71,43 +71,64 @@ export default function WalletButton({ publicKey, setPublicKey }: WalletButtonPr
   }, [setPublicKey]);
 
   const handleConnect = async () => {
+    setIsConnecting(true);
+    setTone("info");
     setStatus("Connecting to Freighter...");
     try {
       const key = await connectFreighter();
       setPublicKey(key);
+      setTone("success");
       setStatus("Connected to Freighter.");
     } catch (error) {
       console.error(error);
+      setTone("error");
       setStatus(error instanceof Error ? error.message : String(error));
+    } finally {
+      setIsConnecting(false);
     }
   };
 
   const handleDisconnect = () => {
     setPublicKey("");
+    setTone("info");
     setStatus("Disconnected from Freighter.");
   };
 
   return (
     <section className="mb-8 rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-md shadow-slate-900/30">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Wallet Connection</p>
-          <p className="mt-2 text-lg text-slate-200">{publicKey || "No wallet connected."}</p>
-          <p className="mt-1 text-sm text-slate-500">{status}</p>
+        <div className="flex items-start gap-3">
+          <span className={`mt-2 h-2 w-2 shrink-0 rounded-full ${DOT_CLASSES[tone]}`} />
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.24em] text-slate-500">Wallet Connection</p>
+            <div className="mt-2 flex items-center gap-2">
+              <p className="font-mono text-lg text-slate-200">
+                {publicKey ? truncateAddress(publicKey, 6) : "No wallet connected"}
+              </p>
+              {publicKey ? <CopyButton value={publicKey} label="Copy address" /> : null}
+            </div>
+            <p className={`mt-1 flex items-center gap-2 text-sm ${TONE_CLASSES[tone]}`}>
+              {isConnecting ? <Spinner /> : null}
+              {status}
+            </p>
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-3">
           <button
             type="button"
             onClick={handleConnect}
-            className="rounded-2xl bg-cyan-500 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400"
+            disabled={isConnecting}
+            className="inline-flex items-center gap-2 rounded-2xl bg-cyan-500 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Connect Freighter
+            {isConnecting ? <Spinner /> : null}
+            {publicKey ? "Reconnect" : "Connect Freighter"}
           </button>
           <button
             type="button"
             onClick={handleDisconnect}
-            className="rounded-2xl border border-slate-700 bg-slate-950/80 px-5 py-3 text-sm text-slate-300 transition hover:border-slate-500"
+            disabled={!publicKey}
+            className="rounded-2xl border border-slate-700 bg-slate-950/80 px-5 py-3 text-sm text-slate-300 transition hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Disconnect
           </button>
