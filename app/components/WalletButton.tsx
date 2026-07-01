@@ -52,13 +52,18 @@ export default function WalletButton({ publicKey, setPublicKey }: WalletButtonPr
         if (connected) {
           const key = await getFreighterPublicKey();
           setPublicKey(key);
+          setTone("success");
           setStatus("Freighter wallet connected.");
         } else {
+          setTone("info");
           setStatus("Freighter is available. Connect to continue.");
         }
       } catch (error) {
         console.error(error);
+        setTone("error");
         setStatus("Unable to check Freighter status.");
+      } finally {
+        setIsConnecting(false);
       }
     }
 
