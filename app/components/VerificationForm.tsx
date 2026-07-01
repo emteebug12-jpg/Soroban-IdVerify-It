@@ -36,15 +36,18 @@ export default function VerificationForm({ publicKey }: VerificationFormProps) {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!publicKey) {
+      setTone("error");
       setMessage("Connect a wallet first.");
       return;
     }
     if (!documentValue.trim()) {
+      setTone("error");
       setMessage("Provide a string to hash before submitting.");
       return;
     }
 
     setIsSubmitting(true);
+    setTone("info");
     setMessage("Preparing Soroban transaction...");
     setTransactionHash("");
 
@@ -53,9 +56,11 @@ export default function VerificationForm({ publicKey }: VerificationFormProps) {
       setMessage("Signing transaction with Freighter...");
       const result = await signAndSubmitTransaction(transaction, publicKey);
       setTransactionHash(result.hash ?? "");
+      setTone("success");
       setMessage("Identity hash recorded successfully.");
     } catch (error) {
       console.error(error);
+      setTone("error");
       setMessage(error instanceof Error ? error.message : String(error));
     } finally {
       setIsSubmitting(false);
