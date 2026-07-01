@@ -95,7 +95,7 @@ export default function VerificationForm({ publicKey }: VerificationFormProps) {
   return (
     <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-md shadow-slate-900/30">
       <div className="mb-6">
-        <h2 className="text-2xl font-semibold text-white">Verify & Record Identity Hash</h2>
+        <h2 className="text-2xl font-semibold tracking-tight text-white">Verify & Record Identity Hash</h2>
         <p className="mt-2 text-slate-400">
           Type a sample document string. It will be hashed locally and submitted to the Soroban contract.
         </p>
